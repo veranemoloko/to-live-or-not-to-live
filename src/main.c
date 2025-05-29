@@ -8,35 +8,35 @@
 #define MAX_SPEED 5
 #define MIN_SPEED 1
 
-void init_field(char field[HEIGHT][WIDTH]);
-int set_speed(int *speed);
+void initField(char field[HEIGHT][WIDTH]);
+int setSpeed(int *speed);
 void analysis(char field[HEIGHT][WIDTH]);
-void print_field(char field[HEIGHT][WIDTH], int speed, int generation);
-void clear_screen();
-void random_fill(char field[HEIGHT][WIDTH], int density);
-int load_from_file(char field[HEIGHT][WIDTH]);
+void printField(char field[HEIGHT][WIDTH], int speed, int generation);
+void clearScreen();
+void randomFill(char field[HEIGHT][WIDTH], int density);
+int fileFill(char field[HEIGHT][WIDTH]);
 
 int main() {
   int speed, generation = 0;
   char field[HEIGHT][WIDTH];
 
-  printf("Hey, wanna game for a while?\n");
-  printf("Okay, then choose input:\n");
-  printf("1 - random fill\n");
-  printf("2 - read from file\n");
+  printf("Hey, wanna game for a while?\n \
+    Okay, then choose input:\n \
+    1 - random fill\n \
+    2 - read from file\n");
 
   int choice;
   scanf("%d", &choice);
 
   switch (choice) {
   case 1:
-    printf("enter alives (1-100): ");
+    printf("enter alives count sells(1-100): ");
     int density;
     scanf("%d", &density);
-    random_fill(field, density);
+    randomFill(field, density);
     break;
   case 2:
-    if (load_from_file(field)) {
+    if (fileFill(field)) {
       return 1;
     }
     break;
@@ -45,23 +45,23 @@ int main() {
     return 1;
   }
 
-  if (set_speed(&speed)) {
+  if (setSpeed(&speed)) {
     printf("enter speed from %d to %d\n", MIN_SPEED, MAX_SPEED);
     return 1;
   }
 
-  clear_screen();
+  clearScreen();
   while (1) {
     analysis(field);
-    print_field(field, speed, ++generation);
+    printField(field, speed, ++generation);
   }
 
   return 0;
 }
 
-void clear_screen() { printf("\033[2J\033[H"); }
+void clearScreen() { printf("\033[2J\033[H"); }
 
-void init_field(char field[HEIGHT][WIDTH]) {
+void initField(char field[HEIGHT][WIDTH]) {
   printf("\033[H\033[J");
   char c;
   for (int i = 0; i < HEIGHT; i++) {
@@ -80,7 +80,7 @@ void init_field(char field[HEIGHT][WIDTH]) {
   freopen("/dev/tty", "r", stdin);
 }
 
-void random_fill(char field[HEIGHT][WIDTH], int density) {
+void randomFill(char field[HEIGHT][WIDTH], int density) {
   srand(time(NULL));
   for (int i = 0; i < HEIGHT; i++) {
     for (int j = 0; j < WIDTH; j++) {
@@ -89,17 +89,15 @@ void random_fill(char field[HEIGHT][WIDTH], int density) {
   }
 }
 
-int load_from_file(char field[HEIGHT][WIDTH]) {
+int fileFill(char field[HEIGHT][WIDTH]) {
   printf("say filename: ");
   char filename[256];
   scanf("%s", filename);
-
   FILE *file = fopen(filename, "r");
   if (!file) {
     printf("error open file. bye...\n");
     return 1;
   }
-
   char c;
   for (int i = 0; i < HEIGHT; i++) {
     for (int j = 0; j < WIDTH; j++) {
@@ -125,7 +123,7 @@ int load_from_file(char field[HEIGHT][WIDTH]) {
   return 0;
 }
 
-int set_speed(int *speed) {
+int setSpeed(int *speed) {
   printf("Speed (%d-%d): ", MIN_SPEED, MAX_SPEED);
   char test;
   if (scanf("%d%c", speed, &test) != 2 || test != '\n') {
@@ -138,7 +136,7 @@ int set_speed(int *speed) {
   return 0;
 }
 
-void print_field(char field[HEIGHT][WIDTH], int speed, int generation) {
+void printField(char field[HEIGHT][WIDTH], int speed, int generation) {
   printf("\033[H");
   printf("..............................THE...GAME...OF...LIFE................."
          "............\n");
@@ -152,7 +150,6 @@ void print_field(char field[HEIGHT][WIDTH], int speed, int generation) {
     printf("\n");
   }
   printf("\033[J");
-
   usleep(speed);
 }
 
